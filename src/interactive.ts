@@ -23,6 +23,28 @@ async function getGitHubToken(hostname?: string): Promise<string | null> {
   }
 }
 
+/**
+ * Ensures that instruction content has the required front matter.
+ * If front matter is missing, adds it to the beginning of the content.
+ */
+function ensureFrontMatter(content: string): string {
+  const frontMatterRegex = /^---\s*\n[\s\S]*?\n---\s*\n/;
+
+  if (frontMatterRegex.test(content)) {
+    // Front matter already exists
+    return content;
+  }
+
+  // Add default front matter
+  const defaultFrontMatter = `---
+applyTo: "**"
+---
+
+`;
+
+  return defaultFrontMatter + content;
+}
+
 export async function interactiveInstall(): Promise<void> {
   const repos = getRepos();
 
@@ -130,7 +152,12 @@ export async function interactiveInstall(): Promise<void> {
         }
       }
 
-      fs.writeFileSync(targetPath, content);
+      let fileContent = content;
+
+      // Ensure the file content has the required front matter
+      fileContent = ensureFrontMatter(content);
+
+      fs.writeFileSync(targetPath, fileContent);
 
       // Track the installation
       addManagedInstruction({
@@ -244,16 +271,19 @@ export async function interactiveUpdate(): Promise<void> {
       const content = await downloadFile(sourceFile.download_url, token || undefined);
       const targetPath = path.join('.github/instructions', inst.filename);
 
+      // Ensure the file content has the required front matter
+      const fileContent = ensureFrontMatter(content);
+
       // Check if content has changed
       const existingContent = fs.existsSync(targetPath) ? fs.readFileSync(targetPath, 'utf-8') : '';
 
-      if (content === existingContent) {
+      if (fileContent === existingContent) {
         console.log(chalk.gray(`  ${inst.filename} is already up to date`));
         continue;
       }
 
       // Write the updated content
-      fs.writeFileSync(targetPath, content);
+      fs.writeFileSync(targetPath, fileContent);
 
       // Update the installation timestamp
       const updatedInstruction = {
