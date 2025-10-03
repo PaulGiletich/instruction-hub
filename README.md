@@ -37,6 +37,18 @@ npx instruction-hub uninstall
 # (or remove, or rm)
 ```
 
+### Shorthand Command
+
+For convenience, `ih` is available as a shorthand alias for `instruction-hub`:
+
+If installed globally (`npm i -g instruction-hub`), you can use it directly:
+
+```bash
+ih config add owner/repo
+ih i
+ih rm
+```
+
 ## Authentication
 
 ### GitHub Enterprise & Private Repositories
@@ -69,16 +81,6 @@ The tool automatically detects your authentication and uses the appropriate toke
 
 Configuration is stored globally in `~/.instruction-hub/config.json` and includes:
 - List of configured repositories
-
-## Installation (Optional)
-
-While the tool is designed to be used with `npx` or `bunx`, you can also install it globally if preferred:
-
-```bash
-npm install -g instruction-hub
-# or
-bun install -g instruction-hub
-```
 
 ## License
 

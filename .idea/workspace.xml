@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="74094120-cca5-4cff-90ed-e7bbf4f3dab5" name="Changes" comment="whops">
+    <list default="true" id="74094120-cca5-4cff-90ed-e7bbf4f3dab5" name="Changes" comment="ensure front matter">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/interactive.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/interactive.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -92,7 +93,7 @@
       <workItem from="1759504144543" duration="794000" />
       <workItem from="1759504984906" duration="528000" />
       <workItem from="1759505530057" duration="21000" />
-      <workItem from="1759505575332" duration="3404000" />
+      <workItem from="1759505575332" duration="3759000" />
     </task>
     <task id="LOCAL-00001" summary="v1.1.3">
       <option name="closed" value="true" />
@@ -118,7 +119,15 @@
       <option name="project" value="LOCAL" />
       <updated>1759508513553</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="ensure front matter">
+      <option name="closed" value="true" />
+      <created>1759509032797</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1759509032797</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -128,7 +137,8 @@
     <MESSAGE value="v1.1.3" />
     <MESSAGE value="remove binary" />
     <MESSAGE value="whops" />
-    <option name="LAST_COMMIT_MESSAGE" value="whops" />
+    <MESSAGE value="ensure front matter" />
+    <option name="LAST_COMMIT_MESSAGE" value="ensure front matter" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
