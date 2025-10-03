@@ -11,13 +11,18 @@ Tired of manually copying and pasting instructions from various GitHub repositor
 - 🏢 **GitHub Enterprise Support**: Works with private GitHub Enterprise repos as well as public GitHub (detects gh cli auth token)
 - 🔐 **Automatic Authentication**: Uses GitHub CLI authentication when available
 - 📦 **Interactive Installation**: Browse and install instructions with an interactive CLI interface
+- 🚀 **Direct URL Installation**: Install instructions directly from a GitHub file URL with a single command
 - 🗑️ **Easy Uninstallation**: Remove managed instructions with interactive selection
 - 📋 **Updates**: Pull the latest versions of installed instructions from their source repositories
 
 ## Usage:
 
 ```bash
-# Add repositories to pull instructions from (public or private)
+# Quick start: Install directly from a GitHub file URL
+npx instruction-hub add https://github.com/owner/repo/blob/main/instructions/my-instruction.md
+# This automatically adds the repo to config and installs the instruction!
+
+# Or add repositories first, then install interactively
 npx instruction-hub config add https://github.com/owner/my-copilot-instructions
 npx instruction-hub config add owner/repo
 npx instruction-hub config add https://ghe.company.com/company-org/company-copilot-instructions
@@ -44,6 +49,10 @@ For convenience, `ih` is available as a shorthand alias for `instruction-hub`:
 If installed globally (`npm i -g instruction-hub`), you can use it directly:
 
 ```bash
+# Direct install from URL
+ih add https://github.com/owner/repo/blob/main/file.md
+
+# Or use the traditional way
 ih config add owner/repo
 ih i
 ih rm

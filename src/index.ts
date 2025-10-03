@@ -4,14 +4,14 @@ import { Command } from 'commander';
 import chalk from 'chalk';
 import { addRepo, removeRepo, getRepos } from './config';
 import { getManagedInstructions } from './tracker';
-import { interactiveInstall, interactiveUninstall, interactiveUpdate } from './interactive';
+import { interactiveInstall, interactiveUninstall, interactiveUpdate, installFromUrl } from './interactive';
 
 const program = new Command();
 
 program
   .name('instruction-hub')
   .description('CLI tool to manage GitHub Copilot instructions')
-  .version('1.0.0')
+  .version('1.3.0')
   .configureHelp({
     sortSubcommands: true,
   })
@@ -58,12 +58,23 @@ config
 
 // Install command
 program
-  .command('install')
+  .command('install [url]')
   .alias('i')
   .alias('add')
-  .description('Install instructions from configured repositories (interactive)')
-  .action(async () => {
-    await interactiveInstall();
+  .description('Install instructions from configured repositories (interactive) or directly from a URL')
+  .action(async (url?: string) => {
+    if (url) {
+      // Check if it's a GitHub URL
+      if (url.startsWith('https://github.com/') || url.startsWith('http://github.com/') || url.includes('github')) {
+        await installFromUrl(url);
+      } else {
+        console.log(chalk.red('Error: Only GitHub URLs are supported.'));
+        console.log(chalk.yellow('Example: ih add https://github.com/owner/repo/blob/main/file.md'));
+      }
+    } else {
+      // No URL provided, run interactive mode
+      await interactiveInstall();
+    }
   });
 
 // Uninstall command

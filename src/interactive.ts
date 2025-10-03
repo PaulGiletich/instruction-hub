@@ -2,8 +2,8 @@ import inquirer from 'inquirer';
 import chalk from 'chalk';
 import * as fs from 'fs';
 import * as path from 'path';
-import { getRepos } from './config';
-import { fetchMarkdownFiles, downloadFile, parseGitHubRepo } from './github';
+import { getRepos, addRepo } from './config';
+import { fetchMarkdownFiles, downloadFile, parseGitHubRepo, parseGitHubFileUrl, fetchSingleFile } from './github';
 import { addManagedInstruction, ensureInstructionsDir, getManagedInstructions, removeManagedInstruction } from './tracker';
 import { RepoFile } from './types';
 import { exec } from 'child_process';
@@ -310,5 +310,95 @@ export async function interactiveUpdate(): Promise<void> {
   }
   if (errorCount > 0) {
     console.log(chalk.red(`✗ Failed to update ${errorCount} instruction(s)`));
+  }
+}
+
+/**
+ * Install instruction directly from a GitHub file URL
+ * This will automatically add the repo to config if not present
+ * and install the specific instruction file
+ */
+export async function installFromUrl(url: string): Promise<void> {
+  console.log(chalk.blue('Processing URL...'));
+
+  // Parse the URL to extract repo and file information
+  const parsed = parseGitHubFileUrl(url);
+
+  if (!parsed) {
+    console.log(chalk.red('Error: Invalid GitHub file URL.'));
+    console.log(chalk.yellow('Expected format: https://github.com/owner/repo/blob/branch/path/to/file.md'));
+    return;
+  }
+
+  const { repo, filePath } = parsed;
+
+  // Check if repo is already in config, if not add it
+  const repos = getRepos();
+  if (!repos.includes(repo)) {
+    addRepo(repo);
+    console.log(chalk.green(`✓ Added repository to config: ${repo}`));
+  } else {
+    console.log(chalk.gray(`Repository already in config: ${repo}`));
+  }
+
+  console.log(chalk.blue(`Downloading instruction from ${filePath}...`));
+
+  try {
+    // Fetch the file
+    const { content, filename, path: sourcePath } = await fetchSingleFile(url);
+
+    ensureInstructionsDir();
+
+    let instructionFilename = filename;
+
+    // Ensure filename ends with .instructions.md for valid instructions
+    if (!instructionFilename.endsWith('.instructions.md')) {
+      const nameWithoutExt = instructionFilename.replace(/\.md$/, '');
+      instructionFilename = `${nameWithoutExt}.instructions.md`;
+    }
+
+    let targetPath = path.join('.github/instructions', instructionFilename);
+
+    // Check if file already exists and handle conflicts
+    if (fs.existsSync(targetPath)) {
+      const managed = getManagedInstructions();
+      const existingInstruction = managed.find(inst => inst.filename === instructionFilename);
+
+      if (existingInstruction && existingInstruction.sourceRepo !== repo) {
+        // File exists from different source - create differentiated filename
+        const nameWithoutExt = instructionFilename.replace(/\.instructions\.md$/, '');
+        const repoName = parseGitHubRepo(repo).repo;
+        const differentiatedFilename = `${nameWithoutExt}.${repoName}.instructions.md`;
+        targetPath = path.join('.github/instructions', differentiatedFilename);
+        instructionFilename = differentiatedFilename;
+
+        console.log(chalk.yellow(`  File ${filename} already exists from different source.`));
+        console.log(chalk.blue(`  Installing as ${instructionFilename} to avoid conflict.`));
+      } else {
+        // Same source or unmanaged file - automatically overwrite
+        console.log(chalk.yellow(`  File ${instructionFilename} already exists. Overwriting...`));
+      }
+    }
+
+    // Ensure the file content has the required front matter
+    const fileContent = ensureFrontMatter(content);
+
+    // Write the file
+    fs.writeFileSync(targetPath, fileContent);
+
+    // Track the installation
+    addManagedInstruction({
+      filename: instructionFilename,
+      sourceRepo: repo,
+      sourcePath: sourcePath,
+      installedAt: new Date().toISOString()
+    });
+
+    console.log(chalk.green(`✓ Successfully installed ${instructionFilename}`));
+    console.log(chalk.gray(`  Source: ${repo}`));
+    console.log(chalk.gray(`  Path: ${sourcePath}`));
+
+  } catch (error) {
+    console.log(chalk.red(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`));
   }
 }
