@@ -18,9 +18,9 @@ Tired of manually copying and pasting instructions from various GitHub repositor
 ## Usage:
 
 ```bash
-# Quick start: Install directly from a GitHub file URL
+# Pull any instruction directly from a GitHub file URL. Regular md files without front matter are supported as well, and converted into valid copilot instructions.
 npx instruction-hub add https://github.com/owner/repo/blob/main/instructions/my-instruction.md
-# This automatically adds the repo to config and installs the instruction!
+# This automatically adds the repo to config and installs the instruction
 
 # Or add repositories first, then install interactively
 npx instruction-hub config add https://github.com/owner/my-copilot-instructions
@@ -46,10 +46,10 @@ npx instruction-hub uninstall
 
 For convenience, `ih` is available as a shorthand alias for `instruction-hub`:
 
-If installed globally (`npm i -g instruction-hub`), you can use it directly:
+To use it, install the instruction-hub globally (`npm i -g instruction-hub`)
 
+Then, you can use:
 ```bash
-# Direct install from URL
 ih add https://github.com/owner/repo/blob/main/file.md
 
 # Or use the traditional way
